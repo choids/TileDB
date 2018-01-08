@@ -1,13 +1,12 @@
 /**
- * @file   tdbpp_delete.h
- *
- * @author Ravi Gaddipati
+ * @file   tdbpp_walk_ls.cc
  *
  * @section LICENSE
  *
  * The MIT License
  *
  * @copyright Copyright (c) 2017 TileDB, Inc.
+ * @copyright Copyright (c) 2016 MIT and Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,22 +28,38 @@
  *
  * @section DESCRIPTION
  *
- * Deleting objects.
+ * Walk/list a directory for TileDB Objects.
  */
 
-#include <string>
 #include <tiledb>
 
 int main() {
   tdb::Context ctx;
-  ctx.del("my_group");
-  ctx.del("my_dense_array");
 
-  try {
-    ctx.del("invalid_path");
-  } catch (std::runtime_error &e) {
-    std::cout << "Failed to delete invalid path\n";
-  }
+  std::cout << "List children: \n";
+  tdb::ObjectIter obj_iter(ctx, "my_group");
+  for (const auto &object : obj_iter)
+    std::cout << object << '\n';
+
+  std::cout << "\nPreorder traversal: \n";
+  obj_iter.set_recursive();  // Default order is preorder
+  for (const auto &object : obj_iter)
+    std::cout << object << '\n';
+
+  std::cout << "\nPostorder traversal: \n";
+  obj_iter.set_recursive(TILEDB_POSTORDER);
+  for (const auto &object : obj_iter)
+    std::cout << object << '\n';
+
+  std::cout << "\nOnly groups: \n";
+  obj_iter.set_iter_policy(true, false, false);
+  for (const auto &object : obj_iter)
+    std::cout << object << '\n';
+
+  std::cout << "\nOnly arrays and groups: \n";
+  obj_iter.set_iter_policy(true, true, false);
+  for (const auto &object : obj_iter)
+    std::cout << object << '\n';
 
   return 0;
 }

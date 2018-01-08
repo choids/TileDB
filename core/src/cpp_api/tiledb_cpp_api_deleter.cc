@@ -1,5 +1,5 @@
 /**
- * @file   tdbpp_error.h
+ * @file   tiledb_cpp_api_deleter.cc
  *
  * @author Ravi Gaddipati
  *
@@ -29,24 +29,45 @@
  *
  * @section DESCRIPTION
  *
- * Shows how to handle errors with tdbpp. Make sure my_group doesn't exist.
+ * This file defines the C++ API for the TileDB Deleter object.
  */
 
-#include <tiledb>
+#include "tiledb_cpp_api_deleter.h"
 
-int main() {
-  tdb::Context ctx;
+namespace tdb {
 
-  // default: throws runtime_error
-  try {
-    tdb::Group::create(ctx, "my_group");
-    tdb::Group::create(ctx, "my_group");
-  } catch (std::runtime_error &e) {
-    std::cout << "Runtime exception:\n\t" << e.what() << "\n";
-  }
+namespace impl {
 
-  // Set a different handler
-  ctx.set_error_handler(
-      [](std::string msg) { std::cout << "Callback:\n\t" << msg << "\n"; });
-  tdb::Group::create(ctx, "my_group");
+void Deleter::operator()(tiledb_query_t *p) {
+  auto &ctx = ctx_.get();
+  ctx.handle_error(tiledb_query_free(ctx.ptr(), p));
 }
+
+void Deleter::operator()(tiledb_array_schema_t *p) {
+  auto &ctx = ctx_.get();
+  ctx.handle_error(tiledb_array_schema_free(ctx.ptr(), p));
+}
+
+void Deleter::operator()(tiledb_attribute_t *p) {
+  auto &ctx = ctx_.get();
+  ctx.handle_error(tiledb_attribute_free(ctx.ptr(), p));
+}
+
+void Deleter::operator()(tiledb_dimension_t *p) {
+  auto &ctx = ctx_.get();
+  ctx.handle_error(tiledb_dimension_free(ctx.ptr(), p));
+}
+
+void Deleter::operator()(tiledb_domain_t *p) {
+  auto &ctx = ctx_.get();
+  ctx.handle_error(tiledb_domain_free(ctx.ptr(), p));
+}
+
+void Deleter::operator()(tiledb_vfs_t *p) {
+  auto &ctx = ctx_.get();
+  ctx.handle_error(tiledb_vfs_free(ctx.ptr(), p));
+}
+
+}  // namespace impl
+
+}  // namespace tdb

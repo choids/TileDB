@@ -1,13 +1,12 @@
 /**
- * @file   tdbpp_error.h
- *
- * @author Ravi Gaddipati
+ * @file   tiledb_array_consolidate.c
  *
  * @section LICENSE
  *
  * The MIT License
  *
  * @copyright Copyright (c) 2017 TileDB, Inc.
+ * @copyright Copyright (c) 2016 MIT and Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,24 +28,32 @@
  *
  * @section DESCRIPTION
  *
- * Shows how to handle errors with tdbpp. Make sure my_group doesn't exist.
+ * It shows how to consolidate arrays.
+ *
+ * One way to make this work is:
+ *
+ * $ ./tiledb_dense_create
+ * $ ./tiledb_dense_write_global_1
+ * $ ./tiledb_dense_write_global_subarray
+ * $ ./tiledb_dense_write_unordered
+ * $ ./tiledb_array_consolidate
+ *
+ * The first three programs create three different fragments. The last program
+ * consolidates the three fragments in a single one.
  */
 
-#include <tiledb>
+#include <tiledb.h>
 
 int main() {
-  tdb::Context ctx;
+  // Create TileDB context
+  tiledb_ctx_t* ctx;
+  tiledb_ctx_create(&ctx, NULL);
 
-  // default: throws runtime_error
-  try {
-    tdb::Group::create(ctx, "my_group");
-    tdb::Group::create(ctx, "my_group");
-  } catch (std::runtime_error &e) {
-    std::cout << "Runtime exception:\n\t" << e.what() << "\n";
-  }
+  // Consolidate the input array
+  tiledb_array_consolidate(ctx, "my_dense_array");
 
-  // Set a different handler
-  ctx.set_error_handler(
-      [](std::string msg) { std::cout << "Callback:\n\t" << msg << "\n"; });
-  tdb::Group::create(ctx, "my_group");
+  // Clean up
+  tiledb_ctx_free(ctx);
+
+  return 0;
 }

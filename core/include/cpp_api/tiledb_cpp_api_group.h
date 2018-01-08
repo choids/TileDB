@@ -1,12 +1,13 @@
 /**
- * @file   tiledb_delete.cc
+ * @file   tiledb_cpp_api_group.h
+ *
+ * @author Ravi Gaddipati
  *
  * @section LICENSE
  *
  * The MIT License
  *
  * @copyright Copyright (c) 2017 TileDB, Inc.
- * @copyright Copyright (c) 2017 MIT, Intel Corporation and TileDB, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,28 +29,29 @@
  *
  * @section DESCRIPTION
  *
- * It shows how to move/rename a TileDB resource.
+ * This file declares the C++ API for the TileDB groups.
  */
 
-#include <tiledb.h>
-#include <stdio.h>
+#ifndef TILEDB_CPP_API_GROUP_H
+#define TILEDB_CPP_API_GROUP_H
 
-int main() {
-  // Create context
-  tiledb_ctx_t* ctx;
-  tiledb_ctx_create(&ctx, NULL);
+#include "tiledb.h"
+#include "tiledb_cpp_api_context.h"
 
-  // Deletes a valid group and array
-  tiledb_delete(ctx, "my_group");
-  tiledb_delete(ctx, "my_dense_array");
+namespace tdb {
 
-  // Deletes an invalid path
-  int rc = tiledb_delete(ctx, "some_invalid_path");
-  if (rc == TILEDB_ERR)
-    printf("Failed deleting invalid path\n");
+namespace Group {
+/**
+ * Creates a new group.
+ *
+ * @param ctx The TileDB context.
+ * @param group The group URI.
+ * @return void
+ */
+void create(const Context& ctx, const std::string& group);
 
-  // Clean up
-  tiledb_ctx_free(ctx);
+}  // namespace Group
 
-  return 0;
-}
+}  // namespace tdb
+
+#endif  // TILEDB_CPP_API_GROUP_H

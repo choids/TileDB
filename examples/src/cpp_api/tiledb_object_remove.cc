@@ -1,5 +1,5 @@
 /**
- * @file   tdbpp_error.h
+ * @file   tiledb_object_remove.h
  *
  * @author Ravi Gaddipati
  *
@@ -29,24 +29,22 @@
  *
  * @section DESCRIPTION
  *
- * Shows how to handle errors with tdbpp. Make sure my_group doesn't exist.
+ * Deleting objects.
  */
 
+#include <string>
 #include <tiledb>
 
 int main() {
   tdb::Context ctx;
+  tdb::Object::remove(ctx, "my_group");
+  tdb::Object::remove(ctx, "my_dense_array");
 
-  // default: throws runtime_error
   try {
-    tdb::Group::create(ctx, "my_group");
-    tdb::Group::create(ctx, "my_group");
+    tdb::Object::remove(ctx, "invalid_path");
   } catch (std::runtime_error &e) {
-    std::cout << "Runtime exception:\n\t" << e.what() << "\n";
+    std::cout << "Failed to delete invalid path\n";
   }
 
-  // Set a different handler
-  ctx.set_error_handler(
-      [](std::string msg) { std::cout << "Callback:\n\t" << msg << "\n"; });
-  tdb::Group::create(ctx, "my_group");
+  return 0;
 }

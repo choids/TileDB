@@ -1,13 +1,12 @@
 /**
- * @file   tdbpp_type.h
- *
- * @author Ravi Gaddipati
+ * @file   tiledb_array_consolidate.cc
  *
  * @section LICENSE
  *
  * The MIT License
  *
  * @copyright Copyright (c) 2017 TileDB, Inc.
+ * @copyright Copyright (c) 2016 MIT and Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,35 +28,15 @@
  *
  * @section DESCRIPTION
  *
- * This defines TileDB datatypes for the C++ API.
+ * It shows how to create a dense array. Make sure that no directory exists
+ * with the name "my_dense_array" in the current working directory. Uses
+ * C++ API.
  */
 
-#include "tdbpp_type.h"
+#include <tiledb>
 
-std::string tdb::type::from_tiledb(const tiledb_datatype_t &type) {
-  switch (type) {
-    case TILEDB_CHAR:
-      return "char";
-    case TILEDB_INT8:
-      return "int8";
-    case TILEDB_UINT8:
-      return "uint8";
-    case TILEDB_INT16:
-      return "int16";
-    case TILEDB_UINT16:
-      return "uint16";
-    case TILEDB_INT32:
-      return "int32";
-    case TILEDB_UINT32:
-      return "uint32";
-    case TILEDB_INT64:
-      return "int64";
-    case TILEDB_UINT64:
-      return "uint64";
-    case TILEDB_FLOAT32:
-      return "float32";
-    case TILEDB_FLOAT64:
-      return "float64";
-  }
-  return "";
+int main() {
+  tdb::Context ctx;
+  tdb::Array::consolidate(ctx, "my_dense_array");
+  return 0;
 }

@@ -1,12 +1,13 @@
 /**
- * @file   tiledb_walk.c
+ * @file   tiledb_cpp_api_array.h
+ *
+ * @author Ravi Gaddipati
  *
  * @section LICENSE
  *
  * The MIT License
  *
  * @copyright Copyright (c) 2017 TileDB, Inc.
- * @copyright Copyright (c) 2016 MIT and Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,49 +29,40 @@
  *
  * @section DESCRIPTION
  *
- * It shows how to explore the contents of a TileDB directory.
+ * This file declares the C++ API for the TileDB arrays.
  */
 
-#include <tiledb.h>
+#ifndef TILEDB_CPP_API_ARRAY_H
+#define TILEDB_CPP_API_ARRAY_H
 
-int print_path(const char* path, tiledb_object_t type, void* data);
+#include "tiledb.h"
+#include "tiledb_cpp_api_array_schema.h"
+#include "tiledb_cpp_api_context.h"
 
-int main() {
-  // Create TileDB context
-  tiledb_ctx_t* ctx;
-  tiledb_ctx_create(&ctx, NULL);
+namespace tdb {
 
-  // Walk in a path with a pre- and post-order traversal
-  printf("Preorder traversal:\n");
-  tiledb_walk(ctx, "my_group", TILEDB_PREORDER, print_path, NULL);
-  printf("\nPostorder traversal:\n");
-  tiledb_walk(ctx, "my_group", TILEDB_POSTORDER, print_path, NULL);
+namespace Array {
 
-  // Finalize context
-  tiledb_ctx_free(ctx);
+/**
+ * Consolidates the fragments of an array.
+ *
+ * @param ctx The TileDB context.
+ * @param name The URI of the array.
+ */
+void consolidate(const Context& ctx, const std::string& array);
 
-  return 0;
-}
+/**
+ * Creates an array on disk from a schema definition.
+ *
+ * @param ctx The TileDB context.
+ * @param name The URI of the array.
+ * @param schema The array schema.
+ */
+void create(
+    const Context& ctx, const std::string& array, const ArraySchema& schema);
 
-int print_path(const char* path, tiledb_object_t type, void* data) {
-  // Simply print the path and type
-  (void)data;
-  printf("%s ", path);
-  switch (type) {
-    case TILEDB_ARRAY:
-      printf("ARRAY");
-      break;
-    case TILEDB_KEY_VALUE:
-      printf("KEY_VALUE");
-      break;
-    case TILEDB_GROUP:
-      printf("GROUP");
-      break;
-    default:
-      printf("INVALID");
-  }
-  printf("\n");
+}  // namespace Array
 
-  // Always iterate till the end
-  return 1;
-}
+}  // namespace tdb
+
+#endif  // TILEDB_CPP_API_ARRAY_H

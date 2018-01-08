@@ -1,5 +1,5 @@
 /**
- * @file   tiledb_error.cc
+ * @file   tiledb_error.c
  *
  * @section LICENSE
  *

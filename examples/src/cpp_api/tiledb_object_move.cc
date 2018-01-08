@@ -1,5 +1,5 @@
 /**
- * @file   tdbpp_move.cc
+ * @file   tiledb_object_move.cc
  *
  * @section LICENSE
  *
@@ -28,7 +28,7 @@
  *
  * @section DESCRIPTION
  *
- * It shows how to move/rename a TileDB resource.
+ * It shows how to move/rename a TileDB object.
  */
 
 #include <tiledb>
@@ -36,11 +36,12 @@
 int main() {
   tdb::Context ctx;
 
-  ctx.move("my_group", "my_group_2", true);
-  ctx.move("my_dense_array", "my_group_2/dense_arrays/my_dense_array", false);
+  tdb::Object::move(ctx, "my_group", "my_group_2", true);
+  tdb::Object::move(
+      ctx, "my_dense_array", "my_group_2/dense_arrays/my_dense_array", false);
 
   try {
-    ctx.move("invalid_path", "path", false);
+    tdb::Object::move(ctx, "invalid_path", "path", false);
   } catch (std::runtime_error &e) {
     std::cout << "Failed to move invalid path.\n";
   }
